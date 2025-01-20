@@ -8,15 +8,21 @@ const app = express();
 
 app.use(express.json());
 
-app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUninitialized: true}))
+app.use("/customer", session({ secret: "fingerprint_customer", resave: true, saveUninitialized: true }))
 
-app.use("/customer/auth/*", function auth(req,res,next){
-//Write the authenication mechanism here
+app.use("/customer/auth/*", function auth(req, res, next) {
+    //Write the authenication mechanism here
+    if (req.session && req.session.user) {
+        // Session exists and user is logged in
+        return next();
+    }
+    // If not authorized, redirect or send an error response
+    res.status(401).send("Unauthorized: Please log in.");
 });
- 
-const PORT =5000;
+
+const PORT = 5000;
 
 app.use("/customer", customer_routes);
 app.use("/", genl_routes);
 
-app.listen(PORT,()=>console.log("Server is running"));
+app.listen(PORT, () => console.log("Server is running"));
