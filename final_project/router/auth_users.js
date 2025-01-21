@@ -6,6 +6,24 @@ const secretKey = "your_secret_key"; // Replace with a secure key
 
 let users = [];
 
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers["authorization"]; // Authorization header
+    const token = authHeader && authHeader.split(" ")[1]; // Extract token from header
+
+    if (!token) {
+        return res.status(401).json({ message: "Token missing or invalid" });
+    }
+
+    // Verify the token
+    jwt.verify(token, secretKey, (err, user) => {
+        if (err) {
+            return res.status(403).json({ message: "Token is invalid or expired" });
+        }
+        req.user = user; // Attach the decoded user info to the request
+        next(); // Proceed to the next middleware or route
+    });
+};
+
 const isValid = (username) => { //returns boolean
     //write code to check is the username is valid
 }
@@ -45,7 +63,17 @@ regd_users.post("/login", (req, res) => {
 });
 
 // Add a book review
-regd_users.put("/auth/review/:isbn", (req, res) => {
+regd_users.post("/auth/review/:isbn", authenticateToken, (req, res) => {
+    //Write your code here
+    console.log("User from token..", req.user);
+    const user = users.find(
+        (user) => user.username === username && user.password === password
+    );
+    return res.status(300).json({ message: "Yet to be implemented" });
+});
+
+// Add a book review
+regd_users.delete("/auth/review/:isbn", authenticateToken,(req, res) => {
     //Write your code here
     return res.status(300).json({ message: "Yet to be implemented" });
 });
