@@ -7,18 +7,19 @@ const public_users = express.Router();
 
 public_users.post("/register", (req, res) => {
     //Write your code 
-    if(!req.query.username || !req.query.password){
+    console.log(req.body);
+    if(!req.body.username || !req.body.password){
         return res.status(500).json({ message: "Missing information" });
     }
     if(users && users.length > 0){
-        let user = users.filter((user)=> user.username === req.query.username);
+        let user = users.filter((user)=> user.username === req.body.username);
         if(user){
             return res.status(500).json({ message: "User already exists" });
         }
     }
     users.push({
-        'username':req.query.username,
-        'password':req.query.password,
+        'username':req.body.username,
+        'password':req.body.password,
     })
     return res.status(200).json({ message: "User added successfully" });
 });
