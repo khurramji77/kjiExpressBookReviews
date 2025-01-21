@@ -13,7 +13,8 @@ public_users.post("/register", (req, res) => {
     }
     if(users && users.length > 0){
         let user = users.filter((user)=> user.username === req.body.username);
-        if(user){
+        console.log('User...', user);
+        if(user && user.length > 0){
             return res.status(500).json({ message: "User already exists" });
         }
     }
