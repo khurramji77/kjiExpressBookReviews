@@ -100,9 +100,25 @@ regd_users.post("/auth/review/:isbn", (req, res) => {
 });
 
 // Add a book review
-regd_users.delete("/auth/review/:isbn", authenticateToken, (req, res) => {
-    //Write your code here
-    return res.status(300).json({ message: "Yet to be implemented" });
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+    let resp = { message: "Somthing went wrong"};
+    users.forEach(
+        (user) => {
+            console.log("user from map:",user);
+            if(user.username === req.user.username){
+                // console.log(req.body.review);
+                if(books[req.body.isbn]){
+                    console.log(books[req.body.isbn]);
+                    delete books[req.body.isbn].reviews[req.user.username];
+                    resp = { message: "Reviews deleted for user"+ req.user.username}
+                }else {
+                    resp = { message: "No book found for ISBN:"+req.body.isbn};
+                }
+            }
+        }
+    );
+    console.log(books[req.body.isbn]);
+    return res.status(200).json(resp);
 });
 
 module.exports.authenticated = regd_users;
