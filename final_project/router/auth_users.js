@@ -75,23 +75,28 @@ regd_users.post("/login", (req, res) => {
 });
 
 // Add a book review
-regd_users.post("/auth/review/:isbn", authenticateToken, (req, res) => {
+regd_users.post("/auth/review/:isbn", (req, res) => {
     //Write your code here
-    console.log("User from token..", req.user);
-    users.map(
+    // console.log("User from token..", req.user);
+    // console.log("Body..", req.body);
+    let resp = { message: "Somthing went wrong"};
+    users.forEach(
         (user) => {
-            if(user.username === req.user.username && user.password === req.user.password){
-                console.log(req.body.review);
+            console.log("user from map:",user);
+            if(user.username === req.user.username){
+                // console.log(req.body.review);
                 if(books[req.body.isbn]){
+                    console.log(books[req.body.isbn]);
                     books[req.body.isbn].reviews[req.user.username] = req.body.review;
-                    return res.status(200).json({ message: "Reviews added for user"+ req.user.username});
+                    resp = { message: "Reviews added for user"+ req.user.username}
                 }else {
-                    return res.status(200).json({ message: "No book found for ISBN:"+req.body.isbn});
+                    resp = { message: "No book found for ISBN:"+req.body.isbn};
                 }
             }
         }
     );
-    return res.status(500).json({ message: "Something went wrong" });
+    console.log(books[req.body.isbn]);
+    return res.status(200).json(resp);
 });
 
 // Add a book review
