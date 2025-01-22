@@ -6,31 +6,6 @@ const secretKey = "your_secret_key"; // Replace with a secure key
 
 let users = [];
 
-const authenticateToken = (req, res, next) => {
-    // const authHeader = req.headers["authorization"]; // Authorization header
-    // const token = authHeader && authHeader.split(" ")[1]; // Extract token from header
-
-    // if (!token) {
-    //     return res.status(401).json({ message: "Token missing or invalid" });
-    // }
-    console.log(req.session.authorization);
-    if (req.session.authorization) {
-        let token = req.session.authorization['accessToken']; // Access Token
-        // Verify JWT token for user authentication
-        jwt.verify(token, secretKey, (err, user) => {
-            if (!err) {
-                req.user = user; // Set authenticated user data on the request object
-                next(); // Proceed to the next middleware
-            } else {
-                return res.status(403).json({ message: "User not authenticated" }); // Return error if token verification fails
-            }
-        });
-
-        // Return error if no access token is found in the session
-    } else {
-        return res.status(403).json({ message: "User not logged in" });
-    }
-};
 
 const isValid = (username) => { //returns boolean
     //write code to check is the username is valid
