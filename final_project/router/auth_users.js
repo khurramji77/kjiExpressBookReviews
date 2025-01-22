@@ -13,7 +13,7 @@ const authenticateToken = (req, res, next) => {
     // if (!token) {
     //     return res.status(401).json({ message: "Token missing or invalid" });
     // }
-
+    console.log(req.session.authorization);
     if (req.session.authorization) {
         let token = req.session.authorization['accessToken']; // Access Token
         // Verify JWT token for user authentication
@@ -78,10 +78,20 @@ regd_users.post("/login", (req, res) => {
 regd_users.post("/auth/review/:isbn", authenticateToken, (req, res) => {
     //Write your code here
     console.log("User from token..", req.user);
-    const user = users.find(
-        (user) => user.username === username && user.password === password
+    users.map(
+        (user) => {
+            if(user.username === req.user.username && user.password === req.user.password){
+                console.log(req.body.review);
+                if(books[req.body.isbn]){
+                    books[req.body.isbn].reviews[req.user.username] = req.body.review;
+                    return res.status(200).json({ message: "Reviews added for user"+ req.user.username});
+                }else {
+                    return res.status(200).json({ message: "No book found for ISBN:"+req.body.isbn});
+                }
+            }
+        }
     );
-    return res.status(300).json({ message: "Yet to be implemented" });
+    return res.status(500).json({ message: "Something went wrong" });
 });
 
 // Add a book review
